@@ -19,11 +19,11 @@
         "type": "git",
         "url": "git+https://github.com/byuitechops/delete-questions-and-conversations.git"
     },
-    "author": "Sam McGrath",
+    "author": "Sam McGrath, Seth Childers, Zach Williams",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/byuitechops/child-template/issues"
     },
     "homepage": "https://github.com/byuitechops/child-template#readme",
-    "childType": "preImport"
+    "childType": "postImport"
 }
