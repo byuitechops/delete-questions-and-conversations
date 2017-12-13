@@ -1,55 +1,21 @@
 /*eslint-env node, es6*/
 
-/* Module Description */
-
-/* Put dependencies here */
+/* Module Description:
+ * This child module goes through the course and creates an array full of
+ * Questions and Conversations Discussion Board topics. After creating the
+ * array, it then goes through and deletes them from the course.
+ */
 
 /* Include this line only if you are going to use Canvas API */
 const canvas = require('canvas-wrapper');
 const asyncLib = require('async');
 
-/* View available course object functions */
-// https://github.com/byuitechops/d2l-to-canvas-conversion-tool/blob/master/documentation/classFunctions.md
-
 module.exports = (course, stepCallback) => {
-    // setTimeout(() => {
-    //     course.addModuleReport(`delete-questions-and-conversations`);
-    //
-    //     // Get the discussion boards
-    //     canvas.get(`/api/v1/courses/${course.info.canvasOU}/discussion_topics?search_term=Questions%20and%20Conversations`, (getErr, discussion_topics) => {
-    //         if (getErr) {
-    //             course.throwErr(`delete-questions-and-conversations`, getErr);
-    //             return;
-    //         }
-    //         course.success(`delete-questions-and-conversations`, `Retrieved ${discussion_topics.length} discussion topics`);
-    //         asyncLib.each(discussion_topics, (topic, callback) => {
-    //             canvas.delete(`/api/v1/courses/${course.info.canvasOU}/discussion_topics/${topic.id}`, (deleteErr, result) => {
-    //                 if (deleteErr) {
-    //                     callback(deleteErr);
-    //                     return;
-    //                 }
-    //                 course.success(`delete-questions-and-conversations`, `Deleted discussion topic: ${topic.title}`);
-    //                 callback(null);
-    //             });
-    //         }, (eachErr) => {
-    //             if (eachErr) {
-    //                 course.throwErr(`delete-questions-and-conversations`, eachErr);
-    //                 return;
-    //             }
-    //             course.success(`delete-questions-and-conversations`, `Finished deleting all discussion topics`);
-    //             stepCallback(null, course);
-    //         });
-    //     });
-    //
-    // }, 10000);
-
-
-    // Start of waterfall phase
-
-
-    function getQCBoards(functionCallback) {
+  //retrieve Questions and Conversations discussion boards
+  function getQCBoards(functionCallback) {
         course.addModuleReport(`delete-questions-and-conversations`);
 
+        //make api call to get all Q&C DBs. Returns with an array of the Q&C DB topics
         canvas.get(`/api/v1/courses/${course.info.canvasOU}/discussion_topics?search_term=Questions%20and%20Conversations`, (getErr, discussion_topics) => {
             if (getErr) {
                 course.throwErr(getErr);
@@ -61,11 +27,16 @@ module.exports = (course, stepCallback) => {
         });
     }
 
+    //delete Q&C DBs
     function deleteQCBoards(discussion_topics, functionCallback) {
+        //go through each D&B and delete them
         asyncLib.each(discussion_topics, (topic, eachCallback) => {
+            //delete the discussion board topic and display success message if it works
             canvas.delete(`/api/v1/courses/${course.info.canvasOU}/discussion_topics/${topic.id}`, (deleteErr, results) => {
                 if (deleteErr) return eachCallback(deleteErr);
 
+                //create an object with title and id of the Q&C DB topic
+                course.info.deletedDiscussionTopics.push({title: topic.title, id: topic.id});
                 course.success(`delete-questions-and-conversations`, `Deleted Discussion Board: ${topic.id}`);
                 eachCallback(null);
             })
@@ -78,9 +49,11 @@ module.exports = (course, stepCallback) => {
     }
 
     var functions = [
-        getQCBoards,
-        deleteQCBoards
+        getQCBoards,     //retrieve Questions and Conversations discussion boards
+        deleteQCBoards   //delete Q&C DBs
     ];
+
+    course.newInfo('deletedDiscussionTopics', []);
 
     setTimeout(() => {
         asyncLib.waterfall(functions, (waterfallErr, results) => {
@@ -88,5 +61,5 @@ module.exports = (course, stepCallback) => {
 
             stepCallback(null, course);
         });
-    }, 10000);
+    }, 10000); //Set to 10 seconds to allow all data to transfer properly before execution
 };
