@@ -13,16 +13,15 @@ const asyncLib = require('async');
 module.exports = (course, stepCallback) => {
   //retrieve Questions and Conversations discussion boards
   function getQCBoards(functionCallback) {
-        course.addModuleReport(`delete-questions-and-conversations`);
 
         //make api call to get all Q&C DBs. Returns with an array of the Q&C DB topics
         canvas.get(`/api/v1/courses/${course.info.canvasOU}/discussion_topics?search_term=Questions%20and%20Conversations`, (getErr, discussion_topics) => {
             if (getErr) {
-                course.throwErr(getErr);
+                course.error(getErr);
                 return;
             }
 
-            course.success(`delete-questions-and-conversations`, `Successfully retrieved ${discussion_topics.length} Questions and Conversations topics`);
+            course.message(`Successfully retrieved ${discussion_topics.length} Questions and Conversations topics`);
             functionCallback(null, discussion_topics);
         });
     }
@@ -37,13 +36,19 @@ module.exports = (course, stepCallback) => {
 
                 //create an object with title and id of the Q&C DB topic
                 course.info.deletedDiscussionTopics.push({title: topic.title, id: topic.id});
-                course.success(`delete-questions-and-conversations`, `Deleted Discussion Board: ${topic.id}`);
+                course.log('Deleted Discussion Boards', {
+                    'Title': topic.title,
+                    'Canvas ID': topic.id
+                });
                 eachCallback(null);
             })
         }, (eachErr) => {
-            if (eachErr) return course.throwErr(`delete-questions-and-conversations`, eachErr);
+            if (eachErr) {
+                course.error(eachErr);
+                return;
+            }
 
-            course.success(`delete-questions-and-conversations`, `Successfully deleted all Questions and Conversations topics`);
+            course.message(`Successfully deleted all Questions and Conversations topics`);
             functionCallback(null);
         });
     }
@@ -57,7 +62,10 @@ module.exports = (course, stepCallback) => {
 
     setTimeout(() => {
         asyncLib.waterfall(functions, (waterfallErr, results) => {
-            if (waterfallErr) return course.throwErr(`delete-questions-and-conversations`, waterfallErr);
+            if (waterfallErr) {
+                course.error(waterfallErr);
+                return;
+            }
 
             stepCallback(null, course);
         });
