@@ -12,7 +12,8 @@ const asyncLib = require('async');
 // https://github.com/byuitechops/d2l-to-canvas-conversion-tool/blob/master/documentation/classFunctions.md
 
 module.exports = (course, stepCallback) => {
-    setTimeout(() => {
+    //Use timeout for testing
+    //setTimeout(() => {
         course.addModuleReport(`delete-questions-and-conversations`);
 
         // Get the discussion boards
@@ -41,6 +42,6 @@ module.exports = (course, stepCallback) => {
             });
         });
 
-    }, 10000);
+    //}, 10000);
 
 };
