@@ -9,7 +9,7 @@ function g1Tests(course, callback) {
 <<<<<<< HEAD
     tap.pass('Success! Wheee! 1');
     // tap.fail('YOLO');
-=======
+
     var topics = course.info.deletedDiscussionTopics.map(topic => topic.title);
     console.log(topics);
     tap.equals(true, topics.includes('L14 Questions and Conversations Awesome'));
@@ -18,7 +18,6 @@ function g1Tests(course, callback) {
     tap.equals(true, topics.includes('l03 - questions and Conversations'));
     tap.equals(true, topics.includes('L02 - questions and conversations'));
     tap.equals(true, topics.includes('L01 - Questions and Conversations'));
->>>>>>> 321d50ffb4363656b8b9e7c8e7e24c7a5ae22d6c
     callback(null, course);
 }
 
