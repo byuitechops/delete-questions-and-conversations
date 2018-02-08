@@ -35,7 +35,7 @@ module.exports = (course, stepCallback) => {
                 if (deleteErr) return eachCallback(deleteErr);
 
                 //create an object with title and id of the Q&C DB topic
-                course.info.deletedDiscussionTopics.push({title: topic.title, id: topic.id});
+                // course.info.deletedDiscussionTopics.push({title: topic.title, id: topic.id});
                 course.log('Deleted Discussion Boards', {
                     'Title': topic.title,
                     'Canvas ID': topic.id
@@ -58,7 +58,7 @@ module.exports = (course, stepCallback) => {
         deleteQCBoards   //delete Q&C DBs
     ];
 
-    course.newInfo('deletedDiscussionTopics', []);
+    // course.newInfo('deletedDiscussionTopics', []);
 
     setTimeout(() => {
         asyncLib.waterfall(functions, (waterfallErr, results) => {
